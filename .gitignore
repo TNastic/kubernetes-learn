@@ -1,0 +1,60 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+secret.yaml
+*.secret.yaml
+*.key
+*.pem
+*.crt
+*.p12
+*.jks
+
+# Node / frontend
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+build/
+frontend/build/
+.vite/
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Java / Maven / backend
+target/
+backend/target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/wrapper/maven-wrapper.jar
+
+# Logs
+logs/
+*.log
+
+# IDE and editor
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Docker and local runtime
+docker-compose.override.yml
+*.pid
+
+# Kubernetes local files
+kubeconfig
+*.kubeconfig
+deploy/k8s/**/secret.yaml
+!deploy/k8s/**/secret.example.yaml
