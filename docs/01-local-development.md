@@ -348,3 +348,148 @@ ECONNREFUSED
 - MyBatis Spring Boot 兼容性说明：https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/
 - Vite 环境变量文档：https://vite.dev/guide/env-and-mode
 - Vite 开发服务器代理文档：https://vite.dev/config/server-options#server-proxy
+
+## 阶段 5：业务 MVP 开发
+
+本阶段目标是把最小闭环扩展成可用的个人任务管理系统。业务仍然保持简单，只实现后续部署验收需要的核心链路：
+
+- 用户注册、登录、退出登录。
+- 登录态通过随机 token 表示，token 存入 Redis，后端服务本身保持无状态。
+- 用户和任务数据持久化到 MySQL。
+- 任务支持创建、列表、修改、删除和按状态筛选。
+- 前端提供注册/登录界面、任务表单、任务列表、状态筛选和后端依赖状态展示。
+
+### 后端分层
+
+```text
+Controller -> Service -> Mapper -> MySQL
+                    |
+                    v
+                  Redis token
+```
+
+新增目录：
+
+```text
+backend/src/main/java/com/example/taskmanager/
+  auth/
+  common/
+  config/
+  controller/AuthController.java
+  controller/TaskController.java
+  dto/auth/
+  dto/task/
+  entity/
+  mapper/UserMapper.java
+  mapper/TaskMapper.java
+  service/AuthService.java
+  service/TaskService.java
+  service/impl/AuthServiceImpl.java
+  service/impl/TaskServiceImpl.java
+backend/src/main/resources/schema.sql
+```
+
+### 数据表
+
+应用启动时会执行 `schema.sql`，创建 `users` 和 `tasks` 两张表。真实数据仍然由环境变量指定的 MySQL 保存，不写入仓库。
+
+### 业务接口
+
+公开接口：
+
+```text
+POST /api/auth/register
+POST /api/auth/login
+GET  /api/health/dependencies
+```
+
+需要登录的接口，请带上请求头：
+
+```text
+Authorization: Bearer <token>
+```
+
+接口列表：
+
+```text
+GET    /api/auth/me
+POST   /api/auth/logout
+GET    /api/tasks?status=ALL|TODO|DONE
+POST   /api/tasks
+PUT    /api/tasks/{id}
+DELETE /api/tasks/{id}
+```
+
+任务状态只允许：
+
+```text
+TODO
+DONE
+```
+
+### Windows 本机运行
+
+后端使用指定 Maven settings 和本地仓库启动：
+
+```powershell
+cd E:\learn\k8s-learn\kubernetes-learn\backend
+$env:SPRING_DATASOURCE_URL="jdbc:mysql://<服务器公网IP>:3306/task_manager?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai"
+$env:SPRING_DATASOURCE_USERNAME="task_app"
+$env:SPRING_DATASOURCE_PASSWORD="<你的 MySQL 密码>"
+$env:SPRING_REDIS_HOST="<服务器公网IP>"
+$env:SPRING_REDIS_PORT="6379"
+$env:SPRING_REDIS_PASSWORD="<你的 Redis 密码>"
+mvn -s "D:\environment\maven3.6\apache-maven-3.6.3\conf\settings_mine.xml" `
+  "-Dmaven.repo.local=D:\environment\maven\repository" `
+  spring-boot:run
+```
+
+前端启动：
+
+```powershell
+cd E:\learn\k8s-learn\kubernetes-learn\frontend
+npm run dev
+```
+
+浏览器打开：
+
+```text
+http://localhost:5173
+```
+
+### 验证方式
+
+后端测试：
+
+```powershell
+cd E:\learn\k8s-learn\kubernetes-learn\backend
+mvn -s "D:\environment\maven3.6\apache-maven-3.6.3\conf\settings_mine.xml" `
+  "-Dmaven.repo.local=D:\environment\maven\repository" `
+  test
+```
+
+前端构建：
+
+```powershell
+cd E:\learn\k8s-learn\kubernetes-learn\frontend
+npm run build
+```
+
+页面验收：
+
+- 可以注册新用户。
+- 可以登录并进入任务工作台。
+- 可以创建任务。
+- 可以修改任务标题、描述和状态。
+- 可以按全部、待完成、已完成筛选。
+- 可以删除任务。
+- 可以退出登录。
+
+### 阶段验收
+
+- `mvn ... test` 可以通过。
+- `npm run build` 可以通过。
+- 后端业务接口按 `controller -> service -> mapper` 分层。
+- 登录 token 存入 Redis，后端不依赖本地内存保存登录态。
+- 任务数据按当前登录用户隔离。
+- 前端 API 地址仍然通过 `VITE_API_BASE_URL` 配置。

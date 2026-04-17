@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
             "spring.datasource.driver-class-name=org.h2.Driver",
             "spring.datasource.username=sa",
             "spring.datasource.password=",
+            "spring.sql.init.mode=never",
             "spring.redis.host=127.0.0.1",
             "spring.redis.port=6379",
             "spring.redis.password="
