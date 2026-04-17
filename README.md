@@ -6,7 +6,7 @@ The goal is not to build a complex task product. The goal is to practice the ful
 
 ## Current Progress
 
-Current stage: stage 4, frontend minimum loop.
+Current stage: stage 5, business MVP.
 
 Stage 1 is complete:
 
@@ -29,6 +29,14 @@ Stage 3 is complete:
 - MySQL access is wired through MyBatis-Plus.
 - Redis connectivity check is implemented.
 - Local backend setup is documented in `docs/01-local-development.md`.
+
+Stage 4 is complete:
+
+- React + Vite frontend created.
+- Frontend API base path is configured through Vite environment variables.
+- Local Vite proxy forwards `/api` requests to the Spring Boot backend.
+- The homepage calls `/api/health/dependencies` and displays backend, MySQL, and Redis status.
+- Local frontend setup is documented in `docs/01-local-development.md`.
 
 The detailed roadmap is in `docs/00-project-plan.md`.
 

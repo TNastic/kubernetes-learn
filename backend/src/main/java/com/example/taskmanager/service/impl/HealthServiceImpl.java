@@ -19,9 +19,7 @@ public class HealthServiceImpl implements HealthService {
     private final HealthMapper healthMapper;
     private final RedisConnectionFactory redisConnectionFactory;
 
-    public HealthServiceImpl(
-            HealthMapper healthMapper,
-            RedisConnectionFactory redisConnectionFactory) {
+    public HealthServiceImpl(HealthMapper healthMapper, RedisConnectionFactory redisConnectionFactory) {
         this.healthMapper = healthMapper;
         this.redisConnectionFactory = redisConnectionFactory;
     }
@@ -39,12 +37,9 @@ public class HealthServiceImpl implements HealthService {
 
     @Override
     public DependencyStatusResponse redis() {
-        RedisConnection connection = redisConnectionFactory.getConnection();
-        try {
+        try (RedisConnection connection = redisConnectionFactory.getConnection()) {
             String result = connection.ping();
             return new DependencyStatusResponse("redis", STATUS_UP, result);
-        } finally {
-            connection.close();
         }
     }
 
