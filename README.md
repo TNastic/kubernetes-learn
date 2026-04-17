@@ -6,7 +6,7 @@ The goal is not to build a complex task product. The goal is to practice the ful
 
 ## Current Progress
 
-Current stage: stage 2, server database preparation.
+Current stage: stage 4, frontend minimum loop.
 
 Stage 1 is complete:
 
@@ -14,6 +14,21 @@ Stage 1 is complete:
 - Basic repository directory structure created.
 - `README.md` created.
 - `.gitignore` created.
+
+Stage 2 is complete:
+
+- MySQL prepared on the Tencent Cloud server.
+- Redis prepared on the Tencent Cloud server.
+- Database connection template documented in `.env.example`.
+- Server database setup documented in `docs/01-server-database.md`.
+
+Stage 3 is complete:
+
+- Java 8 compatible Spring Boot backend created.
+- Backend uses `controller -> service -> mapper` layering.
+- MySQL access is wired through MyBatis-Plus.
+- Redis connectivity check is implemented.
+- Local backend setup is documented in `docs/01-local-development.md`.
 
 The detailed roadmap is in `docs/00-project-plan.md`.
 
@@ -33,11 +48,14 @@ The detailed roadmap is in `docs/00-project-plan.md`.
 kubernetes-learn/
   docs/
     00-project-plan.md
+    01-server-database.md
+    01-local-development.md
 
   frontend/
     src/
 
   backend/
+    pom.xml
     src/
 
   deploy/
