@@ -6,7 +6,7 @@ The goal is not to build a complex task product. The goal is to practice the ful
 
 ## Current Progress
 
-Current stage: stage 5, business MVP.
+Current stage: stage 7, K3s installation and cluster preparation.
 
 Stage 1 is complete:
 
@@ -38,6 +38,18 @@ Stage 4 is complete:
 - The homepage calls `/api/health/dependencies` and displays backend, MySQL, and Redis status.
 - Local frontend setup is documented in `docs/01-local-development.md`.
 
+Stage 5 is complete:
+
+- User registration, login, logout, task CRUD, and task status filtering are implemented.
+- The business MVP is intentionally small so later stages can focus on deployment.
+
+Stage 6 is complete:
+
+- Backend Docker image build is defined in `backend/Dockerfile`.
+- Frontend Docker image build is defined in `frontend/Dockerfile`.
+- Nginx serves the frontend and proxies `/api` to the backend container.
+- Docker build and run steps are documented in `docs/02-docker.md`.
+
 The detailed roadmap is in `docs/00-project-plan.md`.
 
 ## Tech Stack
@@ -58,11 +70,15 @@ kubernetes-learn/
     00-project-plan.md
     01-server-database.md
     01-local-development.md
+    02-docker.md
 
   frontend/
+    Dockerfile
+    nginx.conf
     src/
 
   backend/
+    Dockerfile
     pom.xml
     src/
 
