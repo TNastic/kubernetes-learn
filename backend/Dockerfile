@@ -12,7 +12,7 @@ FROM eclipse-temurin:8-jre
 
 WORKDIR /app
 
-ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=70 -XX:InitialRAMPercentage=40"
+ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=70.0 -XX:InitialRAMPercentage=40.0"
 
 COPY --from=build /workspace/target/task-manager-backend-0.0.1-SNAPSHOT.jar /app/app.jar
 

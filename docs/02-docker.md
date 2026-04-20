@@ -544,3 +544,36 @@ sudo ss -lntp | grep ':80'
 - Maven 依赖下载失败：检查 Maven 仓库访问。
 - `npm ci` 失败：检查 `package-lock.json` 和 npm 网络访问。
 - `npm run build` 失败：回到 Vite 输出日志定位。
+
+### 后端提示 Improperly specified VM option 'MaxRAMPercentage=70'
+
+这是 JVM 参数格式问题，不是 Spring Boot 业务代码问题。当前后端镜像使用 Java 8，`MaxRAMPercentage` 和 `InitialRAMPercentage` 的值需要写成浮点数格式：
+
+```text
+JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=70.0 -XX:InitialRAMPercentage=40.0
+```
+
+如果已经用旧 Dockerfile 构建过镜像，需要重新构建并重建容器：
+
+```bash
+sudo docker rm -f backend
+sudo docker build -t task-manager-backend:0.1.0 ./backend
+
+sudo docker run -d \
+  --name backend \
+  --network task-manager-net \
+  -p 8080:8080 \
+  -e SPRING_DATASOURCE_URL="jdbc:mysql://你的服务器公网IP:3306/task_manager?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai" \
+  -e SPRING_DATASOURCE_USERNAME="task_app" \
+  -e SPRING_DATASOURCE_PASSWORD="你的MySQL密码" \
+  -e SPRING_REDIS_HOST="你的服务器公网IP" \
+  -e SPRING_REDIS_PORT="6379" \
+  -e SPRING_REDIS_PASSWORD="你的Redis密码" \
+  task-manager-backend:0.1.0
+```
+
+如果日志变成 `Unrecognized VM option 'MaxRAMPercentage'`，说明运行镜像里的 Java 8 update 版本太旧，不支持这个参数。此时把 `backend/Dockerfile` 改成固定堆大小更稳：
+
+```dockerfile
+ENV JAVA_TOOL_OPTIONS="-Xms256m -Xmx512m"
+```

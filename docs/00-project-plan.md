@@ -707,7 +707,7 @@ kubernetes-learn/
 后端 JVM 建议：
 
 ```text
-JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=70 -XX:InitialRAMPercentage=40
+JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=70.0 -XX:InitialRAMPercentage=40.0
 ```
 
 注意：
