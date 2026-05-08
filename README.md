@@ -6,7 +6,7 @@ The goal is not to build a complex task product. The goal is to practice the ful
 
 ## Current Progress
 
-Current stage: stage 7, K3s installation and cluster preparation.
+Current stage: stage 8, deploy MySQL and Redis.
 
 Stage 1 is complete:
 
@@ -49,6 +49,15 @@ Stage 6 is complete:
 - Frontend Docker image build is defined in `frontend/Dockerfile`.
 - Nginx serves the frontend and proxies `/api` to the backend container.
 - Docker build and run steps are documented in `docs/02-docker.md`.
+
+Stage 7 is complete:
+
+- K3s is installed on the server.
+- The single-node cluster is `Ready`.
+- Core system pods are running.
+- The default Traefik ingress controller is running.
+- The `task-manager` namespace is created.
+- K3s registry mirror configuration was used to resolve Docker Hub pull timeouts.
 
 The detailed roadmap is in `docs/00-project-plan.md`.
 

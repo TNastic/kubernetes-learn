@@ -402,6 +402,58 @@ kubectl logs -n kube-system <traefik-pod-name>
 - 服务器防火墙是否放行
 - 本地网络是否能直连云服务器
 
+### 5. 系统 Pod 一直卡在 `ContainerCreating`
+
+如果你看到类似下面这种现象：
+
+- `coredns` 卡在 `ContainerCreating`
+- `metrics-server` 卡在 `ContainerCreating`
+- `local-path-provisioner` 卡在 `ContainerCreating`
+- `traefik` 一直起不来
+
+优先执行：
+
+```bash
+sudo kubectl describe pod -n kube-system <pod-name>
+sudo kubectl get events -A --sort-by=.lastTimestamp
+```
+
+如果 `Events` 里出现类似错误：
+
+```text
+FailedCreatePodSandBox
+failed to get sandbox image "rancher/mirrored-pause:3.6"
+failed to pull and unpack image
+registry-1.docker.io ... i/o timeout
+```
+
+这说明不是 Pod YAML 写错了，而是服务器到 `docker.io` 的网络超时，导致 containerd 拉不到系统镜像。
+
+这时可以通过 K3s 的私有仓库配置文件解决：
+
+```bash
+sudo mkdir -p /etc/rancher/k3s
+sudo nano /etc/rancher/k3s/registries.yaml
+```
+
+最小配置示例：
+
+```yaml
+mirrors:
+  docker.io:
+    endpoint:
+      - "https://<你的可访问镜像仓库地址>"
+```
+
+然后重启 K3s：
+
+```bash
+sudo systemctl restart k3s
+sudo kubectl get pods -A
+```
+
+如果镜像源可用，系统 Pod 会重新拉取镜像并逐步恢复到 `Running` 或 `Completed`。
+
 ## 十一、本阶段建议你亲手执行的最小命令清单
 
 Linux 服务器：
